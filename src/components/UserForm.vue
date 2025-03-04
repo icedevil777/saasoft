@@ -23,6 +23,22 @@ const setNullPass = (type, id) => {
   }
 };
 
+const addData = () => {
+  const genId = data.length + 1;
+  console.log('id', genId)
+  data.push({id: genId, tags: '', type: '', login: '', pass: ''}); 
+};
+
+const deleteData = (id) => {
+  const index = data.findIndex(item => item.id === id);
+  if (index !== -1) {
+    data.splice(index, 1);
+  }
+
+  data.forEach((item, index) => {
+    item.id = index + 1;
+  });
+};
 
 </script>
 
@@ -30,7 +46,7 @@ const setNullPass = (type, id) => {
   <div class="flex flex-col border border-solid rounded-2xl h-fit sm:m-auto space-y-5 p-3 sm:p-10 text-[#8ab5c6]">
     <div class="flex flex-row gap-x-3 w-full ">
       <p class="sm:text-3xl ">Учетные записи</p>
-      <IconPlus class=""/>
+      <IconPlus @click="addData"/>
     </div>
 
     <div class="flex flex-row gap-x-1 w-full text-sm sm:text-lg">
@@ -63,17 +79,16 @@ const setNullPass = (type, id) => {
           </select>
         </div>
         <div class="basis-1/4">
-          <input v-model="obj.login" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-model="obj.login" maxlength="100" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/8">
-          <input v-show="obj.type != 'Local'"  v-model="obj.pass" type="password" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-show="obj.type != 'Local'"  v-model="obj.pass" type="password" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="flex basis-1/8 sm:justify-start justify-end">
-          <IconDelete class="size-3 sm:size-5 cursor-pointer mt-1"/>
+          <IconDelete @click="deleteData(obj.id)" class="size-3 sm:size-5 cursor-pointer mt-1"/>
         </div>
       </div>
     </div>
-    {{ data }}
   </div>
 
 </template>
