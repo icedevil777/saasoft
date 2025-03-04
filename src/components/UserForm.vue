@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import IconDelete from './icons/IconDelete.vue'
 import IconPlus from './icons/IconPlus.vue'
 import IconSign from './icons/IconSign.vue'
@@ -7,12 +7,23 @@ import IconSign from './icons/IconSign.vue'
 const data = reactive([
   {id: 1, tags: 'XXX', type: 'LDAP', login: 'icedevil', pass: '12321' },
   {id: 2, tags: 'YYY', type: 'DAP', login: 'gregory', pass: '42211' },
-  {id: 3, tags: 'ZZZ', type: 'AD', login: 'user', pass: '12211' },
+  {id: 3, tags: 'ZZZ', type: 'Local', login: 'user', pass: '12211' },
 ])
 
-const selectOpsions = ['LDAP', 'DAP', 'AD']
+const opsions = ref([
+  { text: 'LDAP', value: 'A' },
+  { text: 'DAP', value: 'B' },
+  { text: 'Local', value: 'C' }
+])
 
-console.log(data)
+const setNullPass = (type, id) => {
+  console.log(type, id)
+  if (type == 'Local'){
+    data[id - 1].pass = null
+  }
+};
+
+
 </script>
 
 <template>
@@ -26,7 +37,7 @@ console.log(data)
       <IconSign />
       <p class="self-center">Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;</p>
     </div>
-    <div class="space-y-3 text-sm sm:text-lg border-solid border p-2 rounded-xl">
+    <div class="space-y-3 text-sm sm:text-lg border-solid border p-3 rounded-xl">
       <div class="flex  px-1">
           <div class="basis-1/4">
             <div>Метки</div>
@@ -44,18 +55,18 @@ console.log(data)
       </div>
       <div v-for="obj in data" :key="obj.id" class="flex px-1 gap-3">
         <div class="basis-1/4">
-          <input v-model="obj.tags" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-model="obj.tags" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/4">
           <select v-model="obj.type" class="w-full h-full border border-solid rounded-lg px-2" >
-            <option v-for="opsion in selectOpsions" :key=opsion> {{ opsion }} </option>
+            <option @click="setNullPass(obj.type, obj.id)" v-for="opsion in opsions" :key=opsion.text :value="opsion.text"> {{ opsion.text }} </option>
           </select>
         </div>
         <div class="basis-1/4">
           <input v-model="obj.login" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/8">
-          <input v-model="obj.pass" type="password" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-show="obj.type != 'Local'"  v-model="obj.pass" type="password" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="flex basis-1/8 sm:justify-start justify-end">
           <IconDelete class="size-3 sm:size-5 cursor-pointer mt-1"/>
