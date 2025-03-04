@@ -5,10 +5,12 @@ import IconPlus from './icons/IconPlus.vue'
 import IconSign from './icons/IconSign.vue'
 
 const data = reactive([
-  { tags: 'XXX', type: 'LDAP', login: 'icedevil', pass: '12321' },
-  { tags: 'YYY', type: 'DAP', login: 'gregory', pass: '42211' },
-  { tags: 'ZZZ', type: 'AD', login: 'user', pass: '12211' },
+  {id: 1, tags: 'XXX', type: 'LDAP', login: 'icedevil', pass: '12321' },
+  {id: 2, tags: 'YYY', type: 'DAP', login: 'gregory', pass: '42211' },
+  {id: 3, tags: 'ZZZ', type: 'AD', login: 'user', pass: '12211' },
 ])
+
+const selectOpsions = ['LDAP', 'DAP', 'AD']
 
 console.log(data)
 </script>
@@ -22,10 +24,10 @@ console.log(data)
 
     <div class="flex flex-row gap-x-1 w-full text-sm sm:text-lg">
       <IconSign />
-      <p class="self-center">Для указания нескольких меток для одной пары логин/пароль используйте разделитель!</p>
+      <p class="self-center">Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;</p>
     </div>
-    <div class="space-y-2 text-sm sm:text-lg">
-      <div class="flex border border-solid px-1">
+    <div class="space-y-3 text-sm sm:text-lg border-solid border p-2 rounded-xl">
+      <div class="flex  px-1">
           <div class="basis-1/4">
             <div>Метки</div>
           </div>
@@ -40,24 +42,27 @@ console.log(data)
             <div>Пароль</div>
           </div>
       </div>
-      <div v-for="obj in data" :key="obj.tags" class="flex border border-solid px-1">
+      <div v-for="obj in data" :key="obj.id" class="flex px-1 gap-3">
         <div class="basis-1/4">
-          <div> {{ obj.tags }} </div>
+          <input v-model="obj.tags" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/4">
-          <div> {{ obj.type }} </div>
+          <select v-model="obj.type" class="w-full h-full border border-solid rounded-lg px-2" >
+            <option v-for="opsion in selectOpsions" :key=opsion> {{ opsion }} </option>
+          </select>
         </div>
         <div class="basis-1/4">
-          <div> {{ obj.login }} </div>
+          <input v-model="obj.login" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/8">
-          <div> {{ obj.pass }} </div>
+          <input v-model="obj.pass" type="password" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="flex basis-1/8 sm:justify-start justify-end">
           <IconDelete class="size-3 sm:size-5 cursor-pointer mt-1"/>
         </div>
       </div>
     </div>
+    {{ data }}
   </div>
 
 </template>
