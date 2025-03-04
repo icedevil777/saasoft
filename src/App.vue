@@ -3,5 +3,8 @@ import UserForm from './components/UserForm.vue'
 </script>
 
 <template>
-  <UserForm />
+  <div class="flex bg-[#005e84] h-[100vh]">
+    <UserForm />
+  </div>
+
 </template>
