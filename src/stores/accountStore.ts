@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 interface Account {
   id: number;
   tags: string;
-  type: string;
+  type: string; 
   login: string;
   pass: string | null; 
 }
@@ -16,6 +16,7 @@ interface Option {
 interface AccountState {
   data: Account[];
   options: Option[];
+  errors: Record<number, Record<string, boolean>>;
 }
 
 export const useAccountStore = defineStore('account', {
@@ -30,6 +31,7 @@ export const useAccountStore = defineStore('account', {
       { text: 'DAP', value: 'B' },
       { text: 'Local', value: 'C' },
     ],
+    errors: {}, 
   }),
   actions: {
     setNullPass(type: string, id: number): void {
@@ -48,7 +50,7 @@ export const useAccountStore = defineStore('account', {
         tags: '',
         type: '',
         login: '',
-        pass: '',
+        pass: null,
       });
     },
 

@@ -1,59 +1,66 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import IconDelete from './icons/IconDelete.vue'
 import IconPlus from './icons/IconPlus.vue'
 import IconSign from './icons/IconSign.vue'
+import { useAccountStore } from '@/stores/accountStore'
+import { storeToRefs } from 'pinia'
 
-const data = reactive([
-  {id: 1, tags: 'XXX', type: 'LDAP', login: 'icedevil', pass: '12321' },
-  {id: 2, tags: 'YYY', type: 'DAP', login: 'gregory', pass: '42211' },
-  {id: 3, tags: 'ZZZ', type: 'Local', login: 'user', pass: '12211' },
-])
+const accountStore = useAccountStore();
+const { data, options } = storeToRefs(accountStore);
 
-const opsions = ref([
-  { text: 'LDAP', value: 'A' },
-  { text: 'DAP', value: 'B' },
-  { text: 'Local', value: 'C' }
-])
+const addData = () => accountStore.addData();
+const deleteData = (id: number) => accountStore.deleteData(id);
+const setNullPass = (type: string, id: number) => accountStore.setNullPass(type, id)
 
-const setNullPass = (type, id) => {
-  console.log(type, id)
-  if (type == 'Local'){
-    data[id - 1].pass = null
+const message = ref('');
+let selectTarget = ref('')
+
+const handleBlur = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (!input.value.trim()) {
+    message.value = 'Поле не может быть пустым!';
+    input.classList.add('error-color');
+  } else {
+    message.value = '';
+    input.classList.remove('error-color'); 
   }
 };
 
-const addData = () => {
-  const genId = data.length + 1;
-  console.log('id', genId)
-  data.push({id: genId, tags: '', type: '', login: '', pass: ''}); 
-};
-
-const deleteData = (id) => {
-  const index = data.findIndex(item => item.id === id);
-  if (index !== -1) {
-    data.splice(index, 1);
+const hadlerSelect = (event: Event) => {
+  const target = event.target as HTMLElement;
+  if (target.nodeName === 'SELECT') {
+    selectTarget.value = target;
+  } else {
+    if (event.target.value === '') {
+      message.value = 'Необходимо сделать выбор!';
+      selectTarget.value.classList.add('error-color');
+    } else {
+      message.value = '';
+      selectTarget.value.classList.remove('error-color');
+    }
   }
-
-  data.forEach((item, index) => {
-    item.id = index + 1;
-  });
 };
+
 
 </script>
 
 <template>
-  <div class="flex flex-col border border-solid rounded-2xl h-fit sm:m-auto space-y-5 p-3 sm:p-10 text-[#8ab5c6]">
+  <div class="flex flex-col border border-solid rounded-2xl h-fit sm:m-auto gap-y-1 sm:gap-y-3 p-3 sm:p-10 text-[#8ab5c6]">
     <div class="flex flex-row gap-x-3 w-full ">
-      <p class="sm:text-3xl ">Учетные записи</p>
-      <IconPlus @click="addData"/>
-    </div>
+      <div  class="flex flex-1">
+        <p class="sm:text-3xl ">Учетные записи</p>
+        <IconPlus class="" @click="addData"/>
+      </div>
+      <p class="sm:flex hidden self-center text-red-600 text-xs sm:text-sm"> {{ message }} </p>
+    </div>  
 
-    <div class="flex flex-row gap-x-1 w-full text-sm sm:text-lg">
+    <div class="flex flex-row gap-x-1 w-full text-xs sm:text-sm">
       <IconSign />
       <p class="self-center">Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;</p>
     </div>
-    <div class="space-y-3 text-sm sm:text-lg border-solid border p-3 rounded-xl">
+    <p class="flex sm:hidden text-red-600 text-xs sm:text-sm mb-1"> {{ message }} </p>
+    <div class="space-y-3 text-xs sm:text-sm border-solid border p-3 rounded-xl">
       <div class="flex  px-1">
           <div class="basis-1/4">
             <div>Метки</div>
@@ -68,23 +75,27 @@ const deleteData = (id) => {
           <div class="basis-1/4">
             <div>Пароль</div>
           </div>
+          <div class="flex basis-1 sm:justify-start justify-end">
+            <div class="w-2 sm:w-4"></div>
+          </div>
       </div>
-      <div v-for="obj in data" :key="obj.id" class="flex px-1 gap-3">
+      <div v-for="obj in data" :key="obj.id" class="flex px-1 gap-3 text-xs sm:text-sm">
         <div class="basis-1/4">
-          <input v-model="obj.tags" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-model="obj.tags" @blur="handleBlur" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
         <div class="basis-1/4">
-          <select v-model="obj.type" class="w-full h-full border border-solid rounded-lg px-2" >
-            <option @click="setNullPass(obj.type, obj.id)" v-for="opsion in opsions" :key=opsion.text :value="opsion.text"> {{ opsion.text }} </option>
+          <select @click="hadlerSelect($event)" v-model="obj.type" class="w-full h-full border border-solid rounded-lg px-2 cursor-pointer" >
+            <option value="" >Выберите опцию</option>
+            <option @click="setNullPass(obj.type, obj.id)" v-for="option in options" :key=option.text :value="option.text"> {{ option.text }} </option>
           </select>
         </div>
         <div class="basis-1/4">
-          <input v-model="obj.login" maxlength="100" class="w-full h-full border border-solid rounded-lg px-2" />
+          <input v-model="obj.login" @blur="handleBlur" maxlength="100" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
-        <div class="basis-1/8">
-          <input v-show="obj.type != 'Local'"  v-model="obj.pass" type="password" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
+        <div class="basis-1/4">
+          <input v-show="obj.type != 'Local'" @blur="handleBlur" v-model="obj.pass" type="password" maxlength="50" class="w-full h-full border border-solid rounded-lg px-2" />
         </div>
-        <div class="flex basis-1/8 sm:justify-start justify-end">
+        <div class="flex basis-1 sm:justify-start justify-end">
           <IconDelete @click="deleteData(obj.id)" class="size-3 sm:size-5 cursor-pointer mt-1"/>
         </div>
       </div>
@@ -94,6 +105,11 @@ const deleteData = (id) => {
 </template>
 
 <style scoped>
+
+.error-color {
+  border-color: red;
+}
+
 h1 {
   font-weight: 500;
   font-size: 2.6rem;
