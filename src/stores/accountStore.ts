@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 
-interface Account {
+interface Data {
   id: number;
-  tags: string;
+  tags: string[];
   type: string; 
   login: string;
   pass: string | null; 
@@ -14,7 +14,7 @@ interface Option {
 }
 
 interface AccountState {
-  data: Account[];
+  data: Data[];
   options: Option[];
   errors: Record<number, Record<string, boolean>>;
 }
@@ -22,9 +22,9 @@ interface AccountState {
 export const useAccountStore = defineStore('account', {
   state: (): AccountState => ({
     data: [
-      { id: 1, tags: 'XXX', type: 'LDAP', login: 'icedevil', pass: '12321' },
-      { id: 2, tags: 'YYY', type: 'DAP', login: 'gregory', pass: '42211' },
-      { id: 3, tags: 'ZZZ', type: 'Local', login: 'user', pass: '12211' },
+      { id: 1, tags: ['XXX'], type: 'LDAP', login: 'icedevil', pass: '12321' },
+      { id: 2, tags: ['YYY'], type: 'DAP', login: 'gregory', pass: '42211' },
+      { id: 3, tags: ['ZZZ'], type: 'Local', login: 'user', pass: '12211' },
     ],
     options: [
       { text: 'LDAP', value: 'A' },
@@ -47,7 +47,7 @@ export const useAccountStore = defineStore('account', {
       const genId = this.data.length + 1;
       this.data.push({
         id: genId,
-        tags: '',
+        tags: [],
         type: '',
         login: '',
         pass: null,

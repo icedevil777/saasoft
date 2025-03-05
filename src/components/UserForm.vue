@@ -14,7 +14,7 @@ const deleteData = (id: number) => accountStore.deleteData(id);
 const setNullPass = (type: string, id: number) => accountStore.setNullPass(type, id)
 
 const message = ref('');
-let selectTarget = ref('')
+const selectTarget = ref('')
 
 const handleBlur = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -31,6 +31,7 @@ const hadlerSelect = (event: Event) => {
   const target = event.target as HTMLElement;
   if (target.nodeName === 'SELECT') {
     selectTarget.value = target;
+    selectTarget.value.classList.remove('error-color');
   } else {
     if (event.target.value === '') {
       message.value = 'Необходимо сделать выбор!';
@@ -42,11 +43,11 @@ const hadlerSelect = (event: Event) => {
   }
 };
 
-
 </script>
 
 <template>
   <div class="flex flex-col border border-solid rounded-2xl h-fit sm:m-auto gap-y-1 sm:gap-y-3 p-3 sm:p-10 text-[#8ab5c6]">
+
     <div class="flex flex-row gap-x-3 w-full ">
       <div  class="flex flex-1">
         <p class="sm:text-3xl ">Учетные записи</p>
@@ -100,8 +101,8 @@ const hadlerSelect = (event: Event) => {
         </div>
       </div>
     </div>
+    {{ data }}
   </div>
-
 </template>
 
 <style scoped>
