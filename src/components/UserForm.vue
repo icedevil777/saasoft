@@ -45,7 +45,7 @@ const addData = () => accountStore.addData();
       </div>
       <FormRow v-for="(obj, key) in data" :key="obj.id" v-model="data[key]" />
     </div>
-    {{ data[0].tags }}
+    <template v-if="data[0]">{{ data[0].tags }}</template>
   </div>
 </template>
 

@@ -20,12 +20,14 @@ interface AccountState {
 }
 
 export const useAccountStore = defineStore('account', {
+  persist: true,
   state: (): AccountState => ({
-    data: [
-      { id: 1, tags: ['XXX'], type: 'LDAP', login: 'icedevil', pass: '12321' },
-      { id: 2, tags: ['YYY'], type: 'DAP', login: 'gregory', pass: '42211' },
-      { id: 3, tags: ['ZZZ'], type: 'Local', login: 'user', pass: '12211' },
-    ],
+    data : [],
+    // data: [
+    //   { id: 1, tags: ['XXX'], type: 'LDAP', login: 'icedevil', pass: '12321' },
+    //   { id: 2, tags: ['YYY'], type: 'DAP', login: 'gregory', pass: '42211' },
+    //   { id: 3, tags: ['ZZZ'], type: 'Local', login: 'user', pass: '12211' },
+    // ],
     options: [
       { text: 'LDAP', value: 'A' },
       { text: 'DAP', value: 'B' },
